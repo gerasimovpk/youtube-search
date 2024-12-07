@@ -47,20 +47,32 @@ const AppContent: React.FC = () => {
     navigate('/', { replace: true });
   };
 
-  // For initial state (no results and not loading)
-  if (!hasResults && !loading) {
+  // For initial state (landing page)
+  if (!hasResults && !loading && location.pathname === '/') {
     return (
-      <div className="min-h-screen bg-white w-full">
-        <div className="flex flex-col min-h-screen">
-          <div className="flex-1 flex flex-col items-center">
-            <div className="w-full max-w-2xl px-6 mt-[35vh]">
-              <SearchSection initialQuery={query} onHomeClick={handleHomeClick} />
-            </div>
-            <div className="mt-8">
-              <EmptyState />
-            </div>
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 pt-12 pb-8">
+          {/* Hero Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Watch Football Matches Without Spoilers
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Missed the big game? Keep the thrill alive! Watch match replays 
+              without knowing the score. Perfect for busy fans who want to 
+              experience the match as if it's live.
+            </p>
           </div>
-          <Outlet />
+
+          {/* Search Section */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <SearchSection initialQuery={query} onHomeClick={handleHomeClick} />
+          </div>
+
+          {/* Featured Matches */}
+          <div className="mt-8">
+            <EmptyState />
+          </div>
         </div>
       </div>
     );

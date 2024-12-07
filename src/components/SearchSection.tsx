@@ -15,7 +15,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({ initialQuery, onHo
   const hasResults = videos.length > 0;
   
   if (!hasResults && !loading) {
-    return <SearchBar initialQuery={initialQuery} />;
+    return <SearchBar initialQuery={initialQuery} autoFocus={true} />;
   }
 
   return (

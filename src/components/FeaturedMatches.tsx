@@ -3,8 +3,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { searchVideos } from '../store/videoSlice';
 import { Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';  // Add this import
-
+import { useNavigate } from 'react-router-dom';
 
 interface Match {
   id: number;
@@ -36,7 +35,7 @@ const FeaturedMatches: React.FC = () => {
   const TOP_10_CLUBS = [
     "Manchester City FC",
     "Real Madrid CF",
-    "Bayern München",
+    "FC Bayern München",
     "Paris Saint-Germain FC",
     "Manchester United FC",
     "Liverpool FC",
@@ -195,26 +194,50 @@ const isTopClub = (teamName: string): boolean => {
   }
 
   // FeaturedMatches.tsx (partial update)
-return (
+  return (
     <div className="w-full max-w-7xl mx-auto px-4">
-        <h2 className="text-xl font-semibold mb-6 text-left">Recent Matches</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Looking for a match text */}
+      <div className="text-center mb-8 md:mb-12">
+        <p className="text-gray-600 mb-4">Looking for a specific match? Use the search above or check out these recent games:</p>
+      </div>
+
+      {/* Matches Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {matches.map((match) => (
-            <button
+          <button
             key={match.id}
             onClick={() => handleMatchClick(match)}
-            className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 
-                hover:shadow-md transition-all text-left w-full flex flex-col"
-            >
-            <div className="flex flex-col gap-4">
+            className="bg-white p-4 md:p-5 rounded-xl shadow-sm hover:shadow-md transition-all 
+              border border-gray-100 text-left group relative overflow-hidden md:scale-95"
+          >
+            {/* Match badges */}
+            <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
+              {/* Top Match Badge */}
+              {(isTopClub(match.homeTeam.name) && isTopClub(match.awayTeam.name)) && (
+                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full whitespace-nowrap">
+                  Top Match
+                </span>
+              )}
+              {/* High Score Badge */}
+              {((match.score?.fullTime?.home || 0) + (match.score?.fullTime?.away || 0) >= 4) && (
+                <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full whitespace-nowrap">
+                  High Score
+                </span>
+              )}
+            </div>
+
+            {/* Match Content */}
+            <div className="flex flex-col gap-3">
               {/* Home Team */}
               <div className="flex items-center gap-3">
                 <img 
                   src={match.homeTeam.crest} 
                   alt={match.homeTeam.name}
-                  className="w-8 h-8 object-contain"
+                  className="w-7 h-7 object-contain"
                 />
-                <span className="font-medium text-gray-900">{match.homeTeam.name}</span>
+                <span className="font-medium text-gray-900">
+                  {match.homeTeam.name}
+                </span>
               </div>
               
               {/* VS line */}
@@ -229,16 +252,26 @@ return (
                 <img 
                   src={match.awayTeam.crest} 
                   alt={match.awayTeam.name}
-                  className="w-8 h-8 object-contain"
+                  className="w-7 h-7 object-contain"
                 />
-                <span className="font-medium text-gray-900">{match.awayTeam.name}</span>
+                <span className="font-medium text-gray-900">
+                  {match.awayTeam.name}
+                </span>
               </div>
             </div>
             
-            {/* Date/Time */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            {/* Date/Time and Watch Button */}
+            <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
               <span className="text-sm text-gray-500">
                 {formatMatchDate(match.utcDate)}
+              </span>
+              <span className="text-sm text-blue-600 opacity-0 group-hover:opacity-100 
+                transition-opacity flex items-center gap-1">
+                Watch Now
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
               </span>
             </div>
           </button>

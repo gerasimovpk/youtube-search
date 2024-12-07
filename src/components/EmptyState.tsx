@@ -4,7 +4,7 @@ import FeaturedMatches from './FeaturedMatches';
 
 export const EmptyState: React.FC = () => {
   return (
-    <div className="text-center w-full">
+    <div className="w-full">
       <FeaturedMatches />
     </div>
   );
