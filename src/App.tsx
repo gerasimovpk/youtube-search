@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
 import { useNavigate, useLocation, useLoaderData, Outlet } from 'react-router-dom';
 import { setSelectedVideo } from './store/videoSlice';
-import { fetchVideoById } from './utils/youtube';
 import { VideoGrid } from './components/VideoGrid';
 import { VideoPlayer } from './components/VideoPlayer';
 import { EmptyState } from './components/EmptyState';
@@ -21,7 +20,7 @@ const AppContent: React.FC = () => {
   const { videos, loading, selectedVideo } = useSelector((state: RootState) => state.videos);
   const navigate = useNavigate();
   const location = useLocation();
-  const { query, videoId } = useLoaderData() as LoaderData;
+  const { query } = useLoaderData() as LoaderData;
   const dispatch = useDispatch();
   const hasResults = videos.length > 0;
 

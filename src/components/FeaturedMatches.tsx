@@ -1,8 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store';
-import { searchVideos } from '../store/videoSlice';
-import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Match {
@@ -25,11 +21,12 @@ interface Match {
   utcDate: string;
 }
 
+const VITE_API_URL = import.meta.env.VITE_API_URL;
+
 const FeaturedMatches: React.FC = () => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const TOP_10_CLUBS = [
@@ -84,7 +81,7 @@ const isTopClub = (teamName: string): boolean => {
       const competitions = [2001, 2014, 2021, 2002, 2019, 2015].join(',');
       
       const response = await fetch(
-        `http://localhost:3001/api/football/matches?` +
+        VITE_API_URL + `/api/football/matches?` +
         `dateFrom=${fromDate}&` +
         `dateTo=${toDate}&` +
         `competitions=${competitions}`,

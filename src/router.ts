@@ -1,5 +1,5 @@
 // router.ts
-import { createBrowserRouter, redirect } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import { searchVideos, clearVideos, setSelectedVideo } from './store/videoSlice';
 import { store } from './store';
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
           
           return { query, videoId };
         },
-        shouldRevalidate: ({ currentUrl, nextUrl, currentParams, nextParams }) => {
+        shouldRevalidate: ({ currentUrl, nextUrl }) => {
           const currentQuery = new URLSearchParams(currentUrl.search).get('q');
           const nextQuery = new URLSearchParams(nextUrl.search).get('q');
           
