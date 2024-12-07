@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: football-proxy
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: FOOTBALL_DATA_API_KEY
+        sync: false

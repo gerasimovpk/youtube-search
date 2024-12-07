@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fetch from 'node-fetch';
+import { Response as FetchResponse } from 'node-fetch'; // Add this if you need Response type
 import { URL } from 'url';
 
 dotenv.config();
@@ -42,7 +42,8 @@ function isCacheValid(entry: CacheEntry): boolean {
 
 // Configure CORS properly
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
+  // origin: ['http://localhost:3000', 'http://localhost:5173'],
+  origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
   credentials: true
@@ -52,16 +53,12 @@ app.use(cors({
 app.options('/api/football/*', cors());
 
 // Handle all football API requests
-app.use('/api/football', async (req, res) => {
+app.use('/api/football', async (req: express.Request, res: express.Response) => {
   try {
-    console.log('\n=== Incoming Request ===');
-    console.log('Original URL:', req.url);
-    console.log('Method:', req.method);
-    console.log('Headers:', req.headers);
-
+    
     // Construct target URL
     const targetUrl = `https://api.football-data.org/v4${req.url.replace('/api/football', '')}`;
-    console.log('Target URL:', targetUrl);
+
 
     // Generate cache key
     const cacheKey = generateCacheKey(req.url);
@@ -69,7 +66,6 @@ app.use('/api/football', async (req, res) => {
 
     // Check cache first
     if (cachedResponse && isCacheValid(cachedResponse)) {
-      console.log('Cache hit! Returning cached data');
       
       // Set CORS headers
       res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
