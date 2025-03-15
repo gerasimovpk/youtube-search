@@ -12,7 +12,9 @@ export default defineConfig({
       output: {
         manualChunks: undefined
       }
-    }
+    },
+    // Ensure index.html is copied for all routes
+    copyPublicDir: true
   },
   server: {
     port: 5173,
