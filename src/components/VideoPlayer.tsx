@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { X, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Maximize2, Minimize2, EyeOff } from 'lucide-react';
 
 interface VideoPlayerProps {
   onClose: () => void;
@@ -12,7 +12,39 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCustomFullscreen, setIsCustomFullscreen] = useState(false);
   const [showIframe, setShowIframe] = useState(false);
+  const [isHovering, setIsHovering] = useState(true);
+  const [hasMouseLeft, setHasMouseLeft] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const hoverTimeoutRef = useRef<number>();
+
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      window.clearTimeout(hoverTimeoutRef.current);
+    }
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!hasMouseLeft) {
+      setHasMouseLeft(true);
+      return;
+    }
+
+    if (hoverTimeoutRef.current) {
+      window.clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = window.setTimeout(() => {
+      setIsHovering(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -50,12 +82,12 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ onClose }) => {
   if (!selectedVideo) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
       <div 
         ref={modalRef}
-        className={`bg-white rounded-lg relative ${
-          isCustomFullscreen ? 'w-full h-full rounded-none' : 'max-w-4xl w-full'
-        }`}
+        className={`bg-white rounded-lg overflow-hidden ${isCustomFullscreen ? 'fixed inset-0' : 'w-full max-w-4xl'}`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className={`relative ${isCustomFullscreen ? 'h-full' : 'pt-[56.25%]'}`}>
           {/* Loading overlay */}
@@ -68,12 +100,17 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ onClose }) => {
           )}
           
           {/* Title protection */}
-          {hideSpoilers && (
-            <div className="absolute top-0 left-0 right-0 h-12 bg-black z-10" />
+          {hideSpoilers && isHovering && (
+            <div className="absolute top-0 left-0 right-0 h-12 bg-black z-10 transition-opacity duration-300 flex items-center justify-between px-4">
+              <div className="flex items-center text-white space-x-2">
+                <EyeOff size={16} className="text-yellow-400" />
+                <span className="text-sm font-medium">Spoiler Protection Active</span>
+              </div>
+            </div>
           )}
           
           {/* Controls */}
-          <div className="absolute top-4 right-4 flex gap-2 z-30">
+          <div className={`absolute top-4 right-4 flex gap-2 z-30 transition-opacity duration-300 ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
             <button
               onClick={() => setIsCustomFullscreen(!isCustomFullscreen)}
               className="p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-75 transition-all text-white"
